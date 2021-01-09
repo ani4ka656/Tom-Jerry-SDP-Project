@@ -16,15 +16,11 @@ void dfs(int v, int f, const vector<vector<pair<int, char> > > &graph, vector<bo
     for(int i=0; i<graph[v].size(); i++)
     {
         if(!used[graph[v][i].first])
-        {
-            if(graph[v][i].second == 'p')
-                path+graph[v][i].second;
             dfs(graph[v][i].first, f, graph, used, path+graph[v][i].second);
-
-        }
+        else if(graph[v][i].second == 'p')
+                path += graph[v][i].second;
     }
     used[v] = 0;
-
 }
 void dfs(int s, int f, const  vector<vector<pair<int, char> > > &graph)
 {
@@ -49,12 +45,12 @@ void readFromFile(ifstream& fout, int& m, int& n, pair<int, int>& Jerry, pair<in
         fout.get();//gets rid of newline
         getline(fout, str);
         int r = furnitureX, c=furnitureY ;
-        while (str != "===")
+        while ( str != "===")
         {
             for(int i=0; i<str.length(); i++)
             {
 
-                if(str[i] == '1')
+                if(str[i] != ' ')
                 {
                     room[r][c] = 1;
 
@@ -118,19 +114,6 @@ int main()
                     graph[x].push_back(make_pair(y, 'e'));
                     graph[y].push_back(make_pair(x, 'w'));
                 }
-               /* if(j+1 < m && room[i][j+1] == 2)
-                {
-                    int y=i*m+j+1;
-                    graph[x].push_back(make_pair(y, 'p'));
-               //     graph[y].push_back(make_pair(x, 'p'));
-
-                }
-                if(i+1 < n &&  room[i+1][j] == 2)
-                {
-                    int y=(i+1)*m+j;
-                    graph[x].push_back(make_pair(y, 'p'));
-                  //  graph[y].push_back(make_pair(x, 'p'));
-                }*/
                 if(i+1 < n && (room[i+1][j] == 0 || room[i+1][j] == 2))
                 {
                     int y=(i+1)*m+j;
