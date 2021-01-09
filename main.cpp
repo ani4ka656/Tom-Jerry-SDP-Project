@@ -8,20 +8,39 @@ void dfs(int v, int f, const vector<vector<pair<int, char> > > &graph, vector<bo
 {
     if(v == f)
     {
-        cout<<endl<<path<<endl;
+        cout<<endl<<path<<"--out of the pathhhhh"<<endl<<endl;
         return ;
     }
-
+    //  cout<<endl<<v<<endl;
     used[v] = 1;
+    int cnt = 0;
+    bool check=false;
+
     for(int i=0; i<graph[v].size(); i++)
     {
-        if(!used[graph[v][i].first])
+        for(int j=0; j<graph[v].size(); j++)
+        {
+            if(graph[v][j].second == 'p')
+                cnt++;
+        }
+        if(!used[graph[v][i].first] /*&& cnt==0*/)
+        {
+            cout<<"count of p:"<<cnt<<" - here is the lertter:: "<<graph[v][i].second<<" "<<" on which position in room:"<<v <<endl;
             dfs(graph[v][i].first, f, graph, used, path+graph[v][i].second);
-        else if(graph[v][i].second == 'p')
-                path += graph[v][i].second;
+            /* dfs(graph[v][i].first, f, graph, used, path+to_string(graph[v][i].first)+":"+graph[v][i].second);*/
+        }
+        else if(graph[v][i].second == 'p' && check==false)
+        {
+            cout<<endl<<"count of p:"<<cnt<<" p on which position:: "<<v<<" here is p occutance:: "<<endl;
+            path+=graph[v][i].second;
+            cnt--;
+            check = true;
+            i=0;
+        }
     }
     used[v] = 0;
 }
+
 void dfs(int s, int f, const  vector<vector<pair<int, char> > > &graph)
 {
     vector<bool> used;
@@ -47,20 +66,24 @@ void readFromFile(ifstream& fout, int& m, int& n, pair<int, int>& Jerry, pair<in
         int r = furnitureX, c=furnitureY ;
         while ( str != "===")
         {
+            int cnt=0;
             for(int i=0; i<str.length(); i++)
             {
 
-                if(str[i] != ' ')
+                if(str[i] != ' ' )
                 {
                     room[r][c] = 1;
 
                 }
-                else
+                else // cout<<str[i]<<i<<c;
+                {
                     room[r][c] = 0;
+                }
                 c++;
+                cnt++;
             }
             r++;
-            c=0;
+            c=c-cnt;
             getline(fout, str);
         }
 
@@ -104,9 +127,9 @@ int main()
             if(room[i][j] == 0 || room[i][j] == 2)
             {
                 int x = i*m+j;
-                 if(room[i][j] == 2)
+                if(room[i][j] == 2)
                 {
-                graph[x].push_back(make_pair(x, 'p'));
+                    graph[x].push_back(make_pair(x, 'p'));
                 }
                 if(j+1 < m &&  (room[i][j+1] == 0 || room[i][j+1] == 2))
                 {
