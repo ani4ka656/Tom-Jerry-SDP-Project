@@ -15,14 +15,13 @@ void dfs(int v, int f, const vector<vector<pair<int, char> > > &graph, vector<bo
     used[v] = 1;
     int cnt = 0;
     bool check=false;
-
+    for(int j=0; j<graph[v].size(); j++)
+    {
+        if(graph[v][j].second == 'p')
+            cnt++;
+    }
     for(int i=0; i<graph[v].size(); i++)
     {
-        for(int j=0; j<graph[v].size(); j++)
-        {
-            if(graph[v][j].second == 'p')
-                cnt++;
-        }
         if(!used[graph[v][i].first] /*&& cnt==0*/)
         {
             cout<<"count of p:"<<cnt<<" - here is the lertter:: "<<graph[v][i].second<<" "<<" on which position in room:"<<v <<endl;
@@ -69,11 +68,9 @@ void readFromFile(ifstream& fout, int& m, int& n, pair<int, int>& Jerry, pair<in
             int cnt=0;
             for(int i=0; i<str.length(); i++)
             {
-
                 if(str[i] != ' ' )
                 {
                     room[r][c] = 1;
-
                 }
                 else // cout<<str[i]<<i<<c;
                 {
