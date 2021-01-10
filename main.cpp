@@ -91,7 +91,39 @@ void dfs(int v, int f, const vector<vector<pair<int, char> > > &graph, vector<bo
     }
     used[v] = 0;
 }
+void bfs(int v, int f, const vector<vector<pair<int, char> > > &graph, vector<bool> &used,  string path="")                                      //BFS алгоритъм с начален връх V
+{
+    queue<char> q;
 
+    used[v] = true;
+    q.push(v);
+
+    while(!q.empty())
+    {
+        char node = q.front();
+        cout<<node<<", ";
+        q.pop();
+        for(int i=0; i<graph[v].size(); i++)
+        {
+            if(!used[graph[v][i].first])
+            {
+                used[graph[v][i].first] = true;
+                q.push(graph[v][i].second);
+            }
+            else if(graph[v][i].second == 'p')
+            {
+
+                q.push(graph[v][i].second);
+            }
+        }
+    }
+}
+void bfs(int s, int f, const  vector<vector<pair<int, char> > > &graph)
+{
+    vector<bool> used;
+    used.assign(graph.size(), 0);
+    bfs(s, f, graph, used);
+}
 void dfs(int s, int f, const  vector<vector<pair<int, char> > > &graph, vector<string>& vec)
 {
     vector<bool> used;
@@ -216,7 +248,6 @@ int main()
             }
         }
     }
-
     for(int i=0; i<n*m; i++)
     {
         cout<<i<<": ";
@@ -230,55 +261,45 @@ int main()
     vector<pair<string, int> > vecWithoutP;
 
     dfs(x1*m+y1, x2*m+y2, graph, vec);
-    for(int i=0; i<vec.size(); i++)
-    {
-        string newStr;
-        int cnt = 0;
-        for(int j=0; j<vec[i].size(); j++)
-        {
-            if(vec[i][j] != 'p')
-            {
-                newStr+=vec[i][j];
+    bfs(x1*m+y1, x2*m+y2, graph);
+    /*   for(int i=0; i<vec.size(); i++)
+       {
+           string newStr;
+           int cnt = 0;
+           for(int j=0; j<vec[i].size(); j++)
+           {
+               if(vec[i][j] != 'p')
+               {
+                   newStr+=vec[i][j];
 
-            } else cnt++;
-        }
-        vecWithoutP.push_back(make_pair(newStr, cnt));
-    }
-   /*  for(int i=0; i<vec.size(); i++)
-    {
-        cout<<vecWithoutP[i].second<<endl;
-    }*/
-    //toms
-    //tomsTree.dfs();
-    vector<pair<string, int> > minimalPaths;
-    int minNum =  minimalPathLength(vecWithoutP);
-    for (int i = 0; i <vecWithoutP.size(); i++)
-    {
-       // cout<<vecWithoutP[i].first.size();
-       if (vecWithoutP[i].first.size() ==  minNum)
-         minimalPaths.push_back(make_pair(vecWithoutP[i].first, vecWithoutP[i].second));
-    }
-    cout<<"minimal path legth is "<< minNum<<endl;
-   /*  for(int i=0; i<minimalstrs.size(); i++)
-    {
-        cout<< minimalstrs[i].first<<endl;
-    }*/
-    for (int i=0; i<minimalPaths.size(); i++)
-    {
-        cout << "Minimal str " << i + 1 << " : ";
-        for (int j = 0; j <  minimalPaths[i].first.size(); j++)
-        {
-            if (j ==  minimalPaths[i].first.size() - 1)
-                cout<< minimalPaths[i].first[j];
-            else
-                cout<< minimalPaths[i].first[j] << " -> ";}
+               } else cnt++;
+           }
+           vecWithoutP.push_back(make_pair(newStr, cnt));
+       }
+       vector<pair<string, int> > minimalPaths;
+       int minNum =  minimalPathLength(vecWithoutP);
+       for (int i = 0; i <vecWithoutP.size(); i++)
+       {
+          if (vecWithoutP[i].first.size() ==  minNum)
+            minimalPaths.push_back(make_pair(vecWithoutP[i].first, vecWithoutP[i].second));
+       }
+       cout<<"minimal path legth is "<< minNum<<endl;
+       for (int i=0; i<minimalPaths.size(); i++)
+       {
+           cout << "Minimal str " << i + 1 << " : ";
+           for (int j = 0; j <  minimalPaths[i].first.size(); j++)
+           {
+               if (j ==  minimalPaths[i].first.size() - 1)
+                   cout<< minimalPaths[i].first[j];
+               else
+                   cout<< minimalPaths[i].first[j] << " -> ";}
 
-                cout<<endl;
-       /* cout<<" Steps until Jerry:"<<minNum<<endl;*/
-        cout<<"Painted Spots until Jerry:"<< minimalPaths[i].second<<endl;
-        cout<<"Turns until Jerry:"<<getTurns(minimalPaths[i].first)<<endl;
-        cout<<"this is all about the path above"<<endl<<endl;
-   }
+                   cout<<endl;
+          /* cout<<" Steps until Jerry:"<<minNum<<endl;*/
+    /* cout<<"Painted Spots until Jerry:"<< minimalPaths[i].second<<endl;
+     cout<<"Turns until Jerry:"<<getTurns(minimalPaths[i].first)<<endl;
+     cout<<"this is all about the path above"<<endl<<endl;
+    }*/
     return 0;
 
 }
