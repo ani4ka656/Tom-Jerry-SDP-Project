@@ -1,15 +1,12 @@
-#include <iostream>
-#include <fstream>
-//#include <vector>
 #include "Room.hpp"
+#include "Tree.hpp"
 using namespace std;
 int main()
 {
     string fileName = "text1.txt";
-    ifstream fout;
-    fout.open(fileName);
-    Room room1(fout);
+    Room room1(fileName);
     room1.start();
+
 
 
     return 0;

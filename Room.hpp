@@ -214,11 +214,16 @@ void Room::printPathTo(int v,vector<vector<char> >&parents)
     for(int i=0; i<parents.size(); i++)
     {
         int newV=0;
-        if(parents[v][i]=='n')newV=v-m;
-        if(parents[v][i]=='e')newV=v+1;
-        if(parents[v][i]=='w')newV=v-1;
-        if(parents[v][i]=='s')newV=v+m;
-        if(parents[v][i]=='b')newV=v;
+        if(parents[v][i]=='n')
+            newV=v-m;
+        if(parents[v][i]=='e')
+            newV=v+1;
+        if(parents[v][i]=='w')
+            newV=v-1;
+        if(parents[v][i]=='s')
+            newV=v+m;
+        if(parents[v][i]=='b')
+            newV=v;
 
         if(newV == v)
         {
@@ -252,7 +257,7 @@ void Room::start()
             cout/*<<"j: "<<j*/<<" ("<<parents[i][j]<<") ";
         cout<<endl;
     }
-   printPathTo(x1*m+y1, parents);
+    printPathTo(x1*m+y1, parents);
 
 }
 #endif
