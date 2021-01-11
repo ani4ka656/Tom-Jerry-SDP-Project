@@ -150,23 +150,34 @@ void Room::findAllPaths(int v, int f, const vector<vector<pair<int, char> > > &g
 }
 int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > > &g, vector<vector<pair<char, int> > >&parents)
 {
-      if(v==f)
+    if(v==f)
         return 0;
     ///as role as used but shows the distance from the start vertex and the number of paths
-    vector<pair<int, int> >dist;
+    vector<vector<int> >dist;
+    vector<vector<int> >times;
+    dist.resize(g.size());
+    times.resize(g.size());
+    for(int i=0; i<dist.size(); i++)
+    {
+        dist[i].assign(g[i].size(),-1);
+        times[i].assign(g[i].size(),-1);
 
-    dist.assign(g.size()+1, make_pair(-1, -1));
+    }
+    int x=v%m, y=v/m;
+     dist[x][y]=0;
+    times[x][y]=1;;
     queue<int> q;
     q.push(v);
     parents[v].push_back(make_pair('s', v));
-    dist[v]=make_pair(0, 1);
+ //   dist[v]=make_pair(0, 1);
+    int k = 0;
     while(!q.empty() )
     {
         int v = q.front();
         q.pop();
-
         for(int i=0; i<g[v].size(); i++)
         {
+            int x=v%m, y=v/m;
             int u=g[v][i].first;
             // cout<<u<<endl;
             ///we have another path with the same distance
@@ -174,14 +185,14 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
                     parents[u].push_back(make_pair(g[v][i].second,u));*/
             // else
             // {
-            if(dist[u].first == dist[v].first+1)
+            if(dist[u][i] == dist[v][i]+1)
             {
-                dist[u].second++;
+                times[u][i]++;
                 parents[u].push_back(make_pair(g[v][i].second, v));
             }
-            if(dist[u].first == -1)
+            if(dist[u][i] == -1)
             {
-                dist[u] = make_pair(dist[v].first+1, dist[v].second);
+                dist[u][i]=dist[v][i]+1;
                 if(u != f)
                     q.push(u);
                 //   else if(u==f)
@@ -192,9 +203,10 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
     }
     //parents[13].clear();
     for(int i=0; i<dist.size(); i++)
-        cout<<"i: "<<i<<" ("<<dist[i].first<<", "<<dist[i].second<<")"<<endl;
+        for(int j=0; j<dist[i].size(); j++)
+            cout<<"i: "<<i<<" ("<<dist[i][j]<<")"<<endl;
 
-    return dist[f].second;
+            return times[x][y];
 }
 void printPathTo(int v,vector<vector<pair<char, int> > >&parents )
 {
@@ -231,7 +243,7 @@ void Room::start()
             cout/*<<"j: "<<j*/<<" ("<<parents[i][j].first<<", "<<parents[i][j].second<<") ";
         cout<<endl;
     }
-    printPathTo(x2*m+y2, parents);
+ //   printPathTo(x2*m+y2, parents);
 
 }
 #endif
