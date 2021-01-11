@@ -47,9 +47,12 @@ public:
     }
     void print()
     {
-        std::cout<<data<<"-";
+        std::cout<<data;
         for(int i=0; i<children.size(); i++)
+        {
             children[i]->print();
+            std::cout<<std::endl;
+        }
 
     }
 
