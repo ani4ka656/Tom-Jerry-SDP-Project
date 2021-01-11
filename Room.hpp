@@ -17,11 +17,11 @@ private:
     void loadGraphwithoutFurniture(vector<vector<pair<int, char> > > &);
     void loadRoom(ifstream& fileName);
     void findAllPaths(int, int, const vector<vector<pair<int, char> > > &, vector<bool> &, string=""); //dfs
-    int findMinimalPaths(int, int, const vector<vector<pair<int, char> > > &, vector<vector<pair<char,int> > >&);//bfs
+    int findMinimalPaths(int, int, const vector<vector<pair<int, char> > > &, vector<vector<char > >&);//bfs
     void dfs(int, int, const  vector<vector<pair<int, char> > > &);
-
+    void printPathTo(int v,vector<vector<char> >&parents );
 public:
-    Room(ifstream& fileName);
+    Room(string& fileName);
     void start();   //Room& operator=(Room const& other);
     void print();
 
@@ -75,18 +75,31 @@ void Room::loadRoom(ifstream& fout)
     }
 
 }
-Room::Room(ifstream& fout)
+Room::Room(string& fileName)
 {
-    loadRoom(fout);
-    for(int i=0; i<n; i++)
+    ifstream fout;
+    fout.open(fileName);
+    if(!fout)
     {
-        for(int j=0; j<m; j++)
-            cout<<room[i][j];
-        cout<<endl;
+        fout.close();
+        cout<<"File cannot be openned"<<endl;
+        return;
     }
+    else
+    {
 
+        loadRoom(fout);
+        fout.close();
+        for(int i=0; i<n; i++)
+        {
+            for(int j=0; j<m; j++)
+                cout<<room[i][j];
+            cout<<endl;
+        }
+
+    }
 }
-void Room::loadGraphwithoutFurniture(vector<vector<pair<int, char> > > &graph)
+void Room::loadGraphwithoutFurniture(vector<vector<pair<int, char> > >&graph)
 {
     graph.resize(n*m);
 
@@ -148,37 +161,25 @@ void Room::findAllPaths(int v, int f, const vector<vector<pair<int, char> > > &g
     }
     used[v] = 0;
 }
-int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > > &g, vector<vector<pair<char, int> > >&parents)
+int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > > &g, vector<vector<char> >&parents)
 {
     if(v==f)
         return 0;
     ///as role as used but shows the distance from the start vertex and the number of paths
-    vector<vector<int> >dist;
-    vector<vector<int> >times;
-    dist.resize(n);
-    times.resize(n);
-    for(int i=0; i<n; i++)
-    {
-        dist[i].assign(m,-1);
-        times[i].assign(m,-1);
+    vector<pair<int, int> >dist;
 
-    }
-    int x=v/m, y=v%m;
-    dist[x][y]=0;
-    times[x][y]=1;;
+    dist.assign(g.size()+1, make_pair(-1, -1));
     queue<int> q;
     q.push(v);
-    parents[v].push_back(make_pair('s', v));
-//   dist[v]=make_pair(0, 1);
-    int k = 0;
+    parents[v].push_back('b');
+    dist[v]=make_pair(0, 1);
     while(!q.empty() )
     {
         int v = q.front();
         q.pop();
+
         for(int i=0; i<g[v].size(); i++)
         {
-            int x=v%m, y=i%m;
-
             int u=g[v][i].first;
             // cout<<u<<endl;
             ///we have another path with the same distance
@@ -186,52 +187,45 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
                     parents[u].push_back(make_pair(g[v][i].second,u));*/
             // else
             // {
-            if(dist[u/m][y] == dist[x][y])
+            if(dist[u].first == dist[v].first+1)
             {
-                times[u/m][y]=dist[x][y]+2;
-                parents[u].push_back(make_pair(g[v][i].second, v));
+                dist[u].second++;
+                parents[u].push_back(g[v][i].second);
             }
-            if(dist[u/m][y] == -1)
+            if(dist[u].first == -1)
             {
-                dist[u/m][y] = dist[x][y]+1;
+                dist[u] = make_pair(dist[v].first+1, dist[v].second);
                 if(u != f)
                     q.push(u);
                 //   else if(u==f)
                 //parents[u].push_back(make_pair(g[v][i].second,u));
-                parents[u].push_back(make_pair(g[v][i].second,v));
+                parents[u].push_back(g[v][i].second);
             }
         }
     }
     //parents[13].clear();
     for(int i=0; i<dist.size(); i++)
-    {
-        cout<<"i: "<<i;
-        for(int j=0; j<dist[i].size(); j++)
-            cout<<"j: "<<j<<" ("<<dist[i][j]<<")";
-        //cout<<endl;
-        cout<<endl;
-    }
-    for(int i=0; i<times.size(); i++)
-    {
-        cout<<"i: "<<i;
-        for(int j=0; j<times[i].size(); j++)
-            cout<<"j: "<<j<<" ("<<times[i][j]<<")";
-        //cout<<endl;
-        cout<<endl;
-    }
-    int newX=f/m, newY =f%m;
-    return times[newX][newY];
+        cout<<"i: "<<i<<" ("<<dist[i].first<<", "<<dist[i].second<<")"<<endl;
+
+    return dist[f].second;
 }
-void printPathTo(int v,vector<vector<pair<char, int> > >&parents )
+void Room::printPathTo(int v,vector<vector<char> >&parents)
 {
     for(int i=0; i<parents.size(); i++)
     {
-        if(parents[v][i].second == v)
+        int newV=0;
+        if(parents[v][i]=='n')newV=v-m;
+        if(parents[v][i]=='e')newV=v+1;
+        if(parents[v][i]=='w')newV=v-1;
+        if(parents[v][i]=='s')newV=v+m;
+        if(parents[v][i]=='b')newV=v;
+
+        if(newV == v)
         {
             cout<<v<<" ";
             return;
         }
-        printPathTo(parents[v][i].second,parents);
+        printPathTo(parents[v][i],parents);
         cout<<v<<" ";
     }
 }
@@ -247,17 +241,18 @@ void Room::start()
     loadGraphwithoutFurniture(graph);
     int x1=Tom.first, y1 =Tom.second, x2=Jerry.first, y2=Jerry.second;
     dfs(x1*m+y1, x2*m+y2, graph);
-    vector<vector<pair<char, int> > >parents;
+    vector<vector<char> >parents;
     parents.resize(n*m);
+
     cout<<findMinimalPaths(x1*m+y1, x2*m+y2, graph,parents);
     for(int i=0; i<n*m; i++)
     {
         cout<<"i: "<<i;
         for(int j=0; j<parents[i].size(); j++)
-            cout/*<<"j: "<<j*/<<" ("<<parents[i][j].first<<", "<<parents[i][j].second<<") ";
+            cout/*<<"j: "<<j*/<<" ("<<parents[i][j]<<") ";
         cout<<endl;
     }
-//   printPathTo(x2*m+y2, parents);
+   printPathTo(x1*m+y1, parents);
 
 }
 #endif
