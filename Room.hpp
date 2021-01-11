@@ -16,7 +16,7 @@ private:
     int n, m;
     void loadGraphwithoutFurniture(vector<vector<pair<int, char> > > &);
     void loadRoom(ifstream& fileName);
-    void findAllPaths(int, int , const vector<vector<pair<int, char> > > &, vector<bool> &, string="");//dfs
+    void findAllPaths(int, int, const vector<vector<pair<int, char> > > &, vector<bool> &, string=""); //dfs
     int findMinimalPaths(int, int, const vector<vector<pair<int, char> > > &, vector<vector<pair<char,int> > >&);//bfs
     void dfs(int, int, const  vector<vector<pair<int, char> > > &);
 
@@ -155,21 +155,21 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
     ///as role as used but shows the distance from the start vertex and the number of paths
     vector<vector<int> >dist;
     vector<vector<int> >times;
-    dist.resize(g.size());
-    times.resize(g.size());
-    for(int i=0; i<dist.size(); i++)
+    dist.resize(n);
+    times.resize(n);
+    for(int i=0; i<n; i++)
     {
-        dist[i].assign(g[i].size(),-1);
-        times[i].assign(g[i].size(),-1);
+        dist[i].assign(m,-1);
+        times[i].assign(m,-1);
 
     }
-    int x=v%m, y=v/m;
-     dist[x][y]=0;
+    int x=v/m, y=v%m;
+    dist[x][y]=0;
     times[x][y]=1;;
     queue<int> q;
     q.push(v);
     parents[v].push_back(make_pair('s', v));
- //   dist[v]=make_pair(0, 1);
+//   dist[v]=make_pair(0, 1);
     int k = 0;
     while(!q.empty() )
     {
@@ -177,7 +177,8 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
         q.pop();
         for(int i=0; i<g[v].size(); i++)
         {
-            int x=v%m, y=v/m;
+            int x=v%m, y=i%m;
+
             int u=g[v][i].first;
             // cout<<u<<endl;
             ///we have another path with the same distance
@@ -185,14 +186,14 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
                     parents[u].push_back(make_pair(g[v][i].second,u));*/
             // else
             // {
-            if(dist[u][i] == dist[v][i]+1)
+            if(dist[u/m][y] == dist[x][y])
             {
-                times[u][i]++;
+                times[u/m][y]=dist[x][y]+2;
                 parents[u].push_back(make_pair(g[v][i].second, v));
             }
-            if(dist[u][i] == -1)
+            if(dist[u/m][y] == -1)
             {
-                dist[u][i]=dist[v][i]+1;
+                dist[u/m][y] = dist[x][y]+1;
                 if(u != f)
                     q.push(u);
                 //   else if(u==f)
@@ -203,10 +204,23 @@ int Room::findMinimalPaths(int v, int f, const vector<vector<pair<int, char> > >
     }
     //parents[13].clear();
     for(int i=0; i<dist.size(); i++)
+    {
+        cout<<"i: "<<i;
         for(int j=0; j<dist[i].size(); j++)
-            cout<<"i: "<<i<<" ("<<dist[i][j]<<")"<<endl;
-
-            return times[x][y];
+            cout<<"j: "<<j<<" ("<<dist[i][j]<<")";
+        //cout<<endl;
+        cout<<endl;
+    }
+    for(int i=0; i<times.size(); i++)
+    {
+        cout<<"i: "<<i;
+        for(int j=0; j<times[i].size(); j++)
+            cout<<"j: "<<j<<" ("<<times[i][j]<<")";
+        //cout<<endl;
+        cout<<endl;
+    }
+    int newX=f/m, newY =f%m;
+    return times[newX][newY];
 }
 void printPathTo(int v,vector<vector<pair<char, int> > >&parents )
 {
@@ -235,15 +249,15 @@ void Room::start()
     dfs(x1*m+y1, x2*m+y2, graph);
     vector<vector<pair<char, int> > >parents;
     parents.resize(n*m);
-   findMinimalPaths(x1*m+y1, x2*m+y2, graph,parents);
-     for(int i=0; i<n*m; i++)
+    cout<<findMinimalPaths(x1*m+y1, x2*m+y2, graph,parents);
+    for(int i=0; i<n*m; i++)
     {
         cout<<"i: "<<i;
         for(int j=0; j<parents[i].size(); j++)
             cout/*<<"j: "<<j*/<<" ("<<parents[i][j].first<<", "<<parents[i][j].second<<") ";
         cout<<endl;
     }
- //   printPathTo(x2*m+y2, parents);
+//   printPathTo(x2*m+y2, parents);
 
 }
 #endif
